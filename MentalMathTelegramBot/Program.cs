@@ -9,9 +9,12 @@ namespace MentalMathTelegramBot
     {
         static void Main(string[] args)
         {
-            var config = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
+            var config = new ConfigurationBuilder()
+                .AddUserSecrets<Program>()
+                .AddJsonFile("appsettings.json")
+                .Build();
 
-            var botBuilder = new BotBuilder();
+            BotBuilder botBuilder = new BotBuilder();
 
             botBuilder.Services.AddLogging(logging => logging.AddConsole());
 
@@ -22,4 +25,9 @@ namespace MentalMathTelegramBot
             Console.ReadLine();
         }
     }
+
+    /*  TODO:
+     *  - Add InlineKeyboards
+     *  - Add context in controllers
+     */
 }

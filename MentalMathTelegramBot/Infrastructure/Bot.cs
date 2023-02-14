@@ -10,6 +10,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using MentalMathTelegramBot.Infrastructure.Controllers.Interfaces;
 using MentalMathTelegramBot.Infrastructure.Messages.Interfaces;
+using MentalMathTelegramBot.Infrastructure.Controllers;
 
 namespace MentalMathTelegramBot.Infrastructure
 {
@@ -21,7 +22,10 @@ namespace MentalMathTelegramBot.Infrastructure
         private CancellationTokenSource cts = new();
         private ReceiverOptions receiverOptions;
 
-        const string TG_TOKEN = "tgBotToken";
+        private string? adminChatId { get; init; }
+
+        const string TG_TOKEN_KEY = "tgBotToken";
+        const string TG_ADMINID_KEY = "adminChat";
 
         public Bot(IConfigurationRoot config, IControllerFactory controllerFactory, ILogger? logger)
         {
@@ -29,19 +33,21 @@ namespace MentalMathTelegramBot.Infrastructure
             this.logger = logger;
             receiverOptions = new()
             {
-                AllowedUpdates = new[] { UpdateType.Message } // receive all update types
+                AllowedUpdates = new [] { UpdateType.Message }
             };
 
-            string? BotToken = config[TG_TOKEN];
+            string? BotToken = config[TG_TOKEN_KEY];
             if (string.IsNullOrEmpty(BotToken))
                 throw new TokenIsNullException();
 
             botClient = new TelegramBotClient(BotToken);
+
+            adminChatId = config[TG_ADMINID_KEY];
         }
 
         public void Start()
         {
-            logger.LogInformation("Bot started...");
+            logger?.LogInformation("Bot started...");
             botClient.StartReceiving(
                 updateHandler: HandleUpdateAsync,
                 pollingErrorHandler: HandlePollingErrorAsync,
@@ -73,7 +79,14 @@ namespace MentalMathTelegramBot.Infrastructure
             await ResolveResponseAsync(message, responseMessage, cancellationToken);
         }
 
-        Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
+        /// <summary>
+        /// Logs error and stops the bot
+        /// </summary>
+        /// <param name="botClient"></param>
+        /// <param name="exception"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        async Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {
             var ErrorMessage = exception switch
             {
@@ -82,8 +95,12 @@ namespace MentalMathTelegramBot.Infrastructure
                 _ => exception.ToString()
             };
 
-            Console.WriteLine(ErrorMessage);
-            return Task.CompletedTask;
+            logger?.LogCritical(ErrorMessage + Environment.NewLine + "Reload the bot...");
+
+            if (!string.IsNullOrEmpty(adminChatId))
+                await botClient.SendTextMessageAsync(adminChatId, ErrorMessage);
+
+            cts.Cancel();
         }
 
 
@@ -95,6 +112,16 @@ namespace MentalMathTelegramBot.Infrastructure
         IMessageController ResolveController(string path)
         {
             return controllerFactory.ResolveController(path);
+        }
+
+        /// <summary>
+        /// Resolve controller using <paramref name="type"/>
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        IMessageController ResolveController(Type type)
+        {
+            return controllerFactory.ResolveController(type);
         }
 
         /// <summary>
@@ -112,6 +139,13 @@ namespace MentalMathTelegramBot.Infrastructure
                     await botClient.SendTextMessageAsync(
                         chatId: requestMessage.Chat.Id,
                         text: textMessage.Text,
+                        cancellationToken: cancellationToken);
+                    break;
+                case PhotoMessage photoMessage:
+                    await botClient.SendPhotoAsync(
+                        chatId: requestMessage.Chat.Id,
+                        photo: photoMessage.Photo,
+                        caption: photoMessage.Text,
                         cancellationToken: cancellationToken);
                     break;
                 default:
