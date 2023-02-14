@@ -2,6 +2,7 @@
 using MentalMathTelegramBot.Infrastructure.Controllers.Interfaces;
 using MentalMathTelegramBot.Infrastructure.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
+using System.IO;
 using System.Reflection;
 
 namespace MentalMathTelegramBot.Infrastructure.Controllers
@@ -36,6 +37,22 @@ namespace MentalMathTelegramBot.Infrastructure.Controllers
             }
 
             return (IMessageController)scope.GetRequiredService(typeof(ErrorController));
+        }
+
+        public IMessageController ResolveController(Type type)
+        {
+            var foundType = controllersTypes
+                .Where(x => x == type)
+                .FirstOrDefault();
+
+            if (foundType != null)
+            {
+                var controller = scope.GetService(foundType);
+                if (controller != null)
+                    return (IMessageController)controller;
+            }
+
+            throw new ControllerNotFoundException();
         }
     }
 }
