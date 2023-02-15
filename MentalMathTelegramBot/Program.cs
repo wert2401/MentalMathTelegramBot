@@ -27,7 +27,7 @@ namespace MentalMathTelegramBot
     }
 
     /*  TODO:
-     *  - Add InlineKeyboards
      *  - Fix bug with editind media message
+     *  - Add processing of parameters from request messages
      */
 }

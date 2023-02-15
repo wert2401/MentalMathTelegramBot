@@ -4,8 +4,8 @@ using MentalMathTelegramBot.Infrastructure.Messages;
 
 namespace MentalMathTelegramBot.Controllers
 {
-    [Path("/meme")]
-    public class TestController : BaseMessageController
+    [Path("/test")]
+    public class TestMessageController : BaseMessageController
     {
 
         public override async Task DoAction()

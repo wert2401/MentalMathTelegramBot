@@ -10,7 +10,7 @@ namespace MentalMathTelegramBot.Infrastructure.Controllers
         /// <summary>
         /// Need to be set on resolving controller
         /// </summary>
-        public MessageContext Context { get; set; }
+        public IUpdateContext Context { get; set; }
 
         public abstract Task DoAction();
 
