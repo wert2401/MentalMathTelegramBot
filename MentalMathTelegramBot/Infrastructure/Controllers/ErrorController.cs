@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace MentalMathTelegramBot.Infrastructure.Controllers
 {
-    public class ErrorController : IMessageController
+    public class ErrorController : BaseMessageController
     {
-        IMessage IMessageController.Get()
+        public override async Task DoAction()
         {
-            return new TextMessage("Command not found.");
+            await SendMessageAsync(new TextMessage("Command not found."));
         }
     }
 }

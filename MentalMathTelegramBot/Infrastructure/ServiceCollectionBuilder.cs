@@ -34,7 +34,7 @@ namespace MentalMathTelegramBot.Infrastructure
             Type controllerBaseType = typeof(IMessageController);
             var dataAccess = Assembly.GetExecutingAssembly();
 
-            var controllersTypes = dataAccess.GetTypes().Where(x => x != controllerBaseType && controllerBaseType.IsAssignableFrom(x));
+            var controllersTypes = dataAccess.GetTypes().Where(x => x != controllerBaseType && controllerBaseType.IsAssignableFrom(x) && !x.IsAbstract);
 
             builder.AddSingleton<IControllerFactory, ControllerFactory>(p => new ControllerFactory(p, controllersTypes));
 

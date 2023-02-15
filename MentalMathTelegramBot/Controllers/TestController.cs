@@ -1,17 +1,22 @@
 ﻿using MentalMathTelegramBot.Infrastructure.Attributes;
-using MentalMathTelegramBot.Infrastructure.Controllers.Interfaces;
+using MentalMathTelegramBot.Infrastructure.Controllers;
 using MentalMathTelegramBot.Infrastructure.Messages;
-using MentalMathTelegramBot.Infrastructure.Messages.Interfaces;
 
 namespace MentalMathTelegramBot.Controllers
 {
     [Path("/meme")]
-    public class TestController : IMessageController
+    public class TestController : BaseMessageController
     {
-        public IMessage Get()
+
+        public override async Task DoAction()
         {
             Stream stream = File.OpenRead("./test/meme.png");
-            return new PhotoMessage("test", stream);
+            Stream stream2 = File.OpenRead("./test/meme2.png");
+            var msg = await SendMessageAsync(new PhotoMessage("test", stream));
+
+            await Task.Delay(1000);
+
+            await EditMessageAsync(msg, new PhotoMessage("edited message", stream2));
         }
     }
 }

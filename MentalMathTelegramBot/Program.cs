@@ -28,6 +28,6 @@ namespace MentalMathTelegramBot
 
     /*  TODO:
      *  - Add InlineKeyboards
-     *  - Add context in controllers
+     *  - Fix bug with editind media message
      */
 }

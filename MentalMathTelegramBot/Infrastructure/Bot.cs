@@ -33,7 +33,7 @@ namespace MentalMathTelegramBot.Infrastructure
             this.logger = logger;
             receiverOptions = new()
             {
-                AllowedUpdates = new [] { UpdateType.Message }
+                AllowedUpdates = new[] { UpdateType.Message }
             };
 
             string? BotToken = config[TG_TOKEN_KEY];
@@ -56,6 +56,16 @@ namespace MentalMathTelegramBot.Infrastructure
             );
         }
 
+        public async Task<Message> SendMessageAsync(MessageContext context, IMessage message)
+        {
+            return await ResolveResponseAsync(context.RequestMessage, message, cts.Token);
+        }
+
+        public async Task<Message> EditMessageAsyc(Message editingMessage, IMessage newMessage)
+        {
+            return await ResovleEditingAsync(editingMessage, newMessage, cts.Token);
+        }
+
         /// <summary>
         /// Proccessing of messages from telegram
         /// </summary>
@@ -74,9 +84,11 @@ namespace MentalMathTelegramBot.Infrastructure
 
             logger?.LogInformation($"Received a '{messageText}' message in chat {message.Chat.Id}.");
 
-            IMessage responseMessage = ResolveController(messageText).Get();
+            IMessageController messageController = ResolveController(messageText);
 
-            await ResolveResponseAsync(message, responseMessage, cancellationToken);
+            messageController.Context = new MessageContext(this, message);
+
+            await messageController.DoAction();
         }
 
         /// <summary>
@@ -131,18 +143,19 @@ namespace MentalMathTelegramBot.Infrastructure
         /// <param name="responseMessage">Response message from resolved controller</param>
         /// <param name="cancellationToken">Cancelation token</param>
         /// <returns></returns>
-        async Task ResolveResponseAsync(Message requestMessage, IMessage responseMessage, CancellationToken cancellationToken)
+        async Task<Message> ResolveResponseAsync(Message requestMessage, IMessage responseMessage, CancellationToken cancellationToken)
         {
+            Message sendedMessage = new Message();
             switch (responseMessage)
             {
                 case TextMessage textMessage:
-                    await botClient.SendTextMessageAsync(
+                    sendedMessage = await botClient.SendTextMessageAsync(
                         chatId: requestMessage.Chat.Id,
                         text: textMessage.Text,
                         cancellationToken: cancellationToken);
                     break;
                 case PhotoMessage photoMessage:
-                    await botClient.SendPhotoAsync(
+                    sendedMessage = await botClient.SendPhotoAsync(
                         chatId: requestMessage.Chat.Id,
                         photo: photoMessage.Photo,
                         caption: photoMessage.Text,
@@ -151,6 +164,38 @@ namespace MentalMathTelegramBot.Infrastructure
                 default:
                     break;
             }
+
+            return sendedMessage;
+        }
+
+        async Task<Message> ResovleEditingAsync(Message editingMessage, IMessage newMessage, CancellationToken cancellationToken)
+        {
+            Message editedMesssage = new Message();
+            switch (newMessage)
+            {
+                case TextMessage textMessage:
+                    editedMesssage = await botClient.EditMessageTextAsync(
+                        chatId: editingMessage.Chat.Id,
+                        messageId: editingMessage.MessageId,
+                        text: textMessage.Text,
+                        cancellationToken: cancellationToken);
+                    break;
+                case PhotoMessage photoMessage:
+                    //Bug: when editing message does not have media, telegram sents exception
+                    InputMediaPhoto inputMediaPhoto = new InputMediaPhoto(new InputMedia(photoMessage.Stream, "photo"));
+                    inputMediaPhoto.Caption = photoMessage.Text;
+
+                    editedMesssage = await botClient.EditMessageMediaAsync(
+                        chatId: editingMessage.Chat.Id,
+                        messageId: editingMessage.MessageId,
+                        media: inputMediaPhoto,
+                        cancellationToken: cancellationToken);
+                    break;
+                default:
+                    break;
+            }
+
+            return editedMesssage;
         }
     }
 }
