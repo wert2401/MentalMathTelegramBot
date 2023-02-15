@@ -1,13 +1,12 @@
 ﻿using MentalMathTelegramBot.Infrastructure.Attributes;
-using MentalMathTelegramBot.Infrastructure.Controllers.Interfaces;
+using MentalMathTelegramBot.Infrastructure.Controllers;
 using MentalMathTelegramBot.Infrastructure.Messages;
-using MentalMathTelegramBot.Infrastructure.Messages.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace MentalMathTelegramBot.Controllers
 {
     [Path("/hello")]
-    public class HelloMessageController : IMessageController
+    public class HelloMessageController : BaseMessageController
     {
         private readonly ILogger<HelloMessageController> logger;
 
@@ -16,10 +15,15 @@ namespace MentalMathTelegramBot.Controllers
             this.logger = logger;
         }
 
-        public IMessage Get()
+        public override async Task DoAction()
         {
             logger.LogInformation("Hello controller");
-            return new TextMessage("Hello");
+
+            var msg = await SendMessageAsync(new TextMessage("Hello"));
+
+            await Task.Delay(500);
+
+            await EditMessageAsync(msg, new TextMessage("edited message"));
         }
     }
 }

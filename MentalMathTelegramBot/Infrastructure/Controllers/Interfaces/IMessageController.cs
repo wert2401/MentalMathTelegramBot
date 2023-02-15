@@ -1,9 +1,11 @@
-﻿using MentalMathTelegramBot.Infrastructure.Messages.Interfaces;
+﻿using MentalMathTelegramBot.Infrastructure.Messages;
+using MentalMathTelegramBot.Infrastructure.Messages.Interfaces;
 
 namespace MentalMathTelegramBot.Infrastructure.Controllers.Interfaces
 {
     public interface IMessageController
     {
-        public IMessage Get();
+        public MessageContext Context { get; set; }
+        public Task DoAction();
     }
 }

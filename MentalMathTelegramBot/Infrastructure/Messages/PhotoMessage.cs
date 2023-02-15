@@ -3,14 +3,19 @@ using Telegram.Bot.Types.InputFiles;
 
 namespace MentalMathTelegramBot.Infrastructure.Messages
 {
-    public class PhotoMessage : IMessage
+    public class PhotoMessage : IMediaMessage
     {
         public string Text { get; set; }
         public InputOnlineFile Photo { get; private set; }
+        /// <summary>
+        /// Represents data stream of media message
+        /// </summary>
+        public Stream Stream { get; set; }
 
         public PhotoMessage(string text, Stream photoStream)
         {
             Text = text;
+            Stream = photoStream;
             Photo = new InputOnlineFile(photoStream);
         }
     }
