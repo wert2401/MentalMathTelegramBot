@@ -10,7 +10,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using MentalMathTelegramBot.Infrastructure.Controllers.Interfaces;
 using MentalMathTelegramBot.Infrastructure.Messages.Interfaces;
-using MentalMathTelegramBot.Infrastructure.Controllers;
+using MentalMathTelegramBot.Infrastructure.Messages.Queries;
 
 namespace MentalMathTelegramBot.Infrastructure
 {
@@ -33,7 +33,7 @@ namespace MentalMathTelegramBot.Infrastructure
             this.logger = logger;
             receiverOptions = new()
             {
-                AllowedUpdates = new[] { UpdateType.Message }
+                AllowedUpdates = new[] { UpdateType.Message, UpdateType.CallbackQuery }
             };
 
             string? BotToken = config[TG_TOKEN_KEY];
@@ -56,9 +56,9 @@ namespace MentalMathTelegramBot.Infrastructure
             );
         }
 
-        public async Task<Message> SendMessageAsync(MessageContext context, IMessage message)
+        public async Task<Message> SendMessageAsync(IUpdateContext context, IMessage message)
         {
-            return await ResolveResponseAsync(context.RequestMessage, message, cts.Token);
+            return await ResolveResponseAsync(context, message, cts.Token);
         }
 
         public async Task<Message> EditMessageAsyc(Message editingMessage, IMessage newMessage)
@@ -75,10 +75,15 @@ namespace MentalMathTelegramBot.Infrastructure
         /// <returns></returns>
         async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
-            // Only process Message updates: https://core.telegram.org/bots/api#message
-            if (update.Message is not { } message)
-                return;
-            // Only process text messages
+            if (update.Message is { } message)
+                await HandleMessageUpdateAsync(message, cancellationToken);
+
+            if (update.CallbackQuery is { } query)
+                await HandleQueryUpdateAsync(query, cancellationToken);
+        }
+
+        async Task HandleMessageUpdateAsync(Message message, CancellationToken cancellationToken)
+        {
             if (message.Text is not { } messageText)
                 return;
 
@@ -87,6 +92,20 @@ namespace MentalMathTelegramBot.Infrastructure
             IMessageController messageController = ResolveController(messageText);
 
             messageController.Context = new MessageContext(this, message);
+
+            await messageController.DoAction();
+        }
+
+        async Task HandleQueryUpdateAsync(CallbackQuery query, CancellationToken cancellationToken)
+        {
+            if (query.Data is not { } messageText)
+                return;
+
+            logger?.LogInformation($"Received a '{messageText}' query in chat {query.Message?.Chat.Id}.");
+
+            IMessageController messageController = ResolveController(messageText);
+
+            messageController.Context = new QueryContext(this, query, query.Message);
 
             await messageController.DoAction();
         }
@@ -111,8 +130,6 @@ namespace MentalMathTelegramBot.Infrastructure
 
             if (!string.IsNullOrEmpty(adminChatId))
                 await botClient.SendTextMessageAsync(adminChatId, ErrorMessage);
-
-            cts.Cancel();
         }
 
 
@@ -143,27 +160,37 @@ namespace MentalMathTelegramBot.Infrastructure
         /// <param name="responseMessage">Response message from resolved controller</param>
         /// <param name="cancellationToken">Cancelation token</param>
         /// <returns></returns>
-        async Task<Message> ResolveResponseAsync(Message requestMessage, IMessage responseMessage, CancellationToken cancellationToken)
+        async Task<Message> ResolveResponseAsync(IUpdateContext requestContext, IMessage responseMessage, CancellationToken cancellationToken)
         {
             Message sendedMessage = new Message();
             switch (responseMessage)
             {
                 case TextMessage textMessage:
                     sendedMessage = await botClient.SendTextMessageAsync(
-                        chatId: requestMessage.Chat.Id,
+                        chatId: requestContext.RequestMessage.Chat.Id,
                         text: textMessage.Text,
                         cancellationToken: cancellationToken);
                     break;
                 case PhotoMessage photoMessage:
                     sendedMessage = await botClient.SendPhotoAsync(
-                        chatId: requestMessage.Chat.Id,
+                        chatId: requestContext.RequestMessage.Chat.Id,
                         photo: photoMessage.Photo,
                         caption: photoMessage.Text,
+                        cancellationToken: cancellationToken);
+                    break;
+                case QueryMessageKeyboard keyboardMessage:
+                    sendedMessage = await botClient.SendTextMessageAsync(
+                        chatId: requestContext.RequestMessage.Chat.Id,
+                        text: keyboardMessage.Text,
+                        replyMarkup: keyboardMessage.ToMarkup(),
                         cancellationToken: cancellationToken);
                     break;
                 default:
                     break;
             }
+
+            if (requestContext is QueryContext queryContext)
+                await botClient.AnswerCallbackQueryAsync(queryContext.Query.Id);
 
             return sendedMessage;
         }
@@ -189,6 +216,14 @@ namespace MentalMathTelegramBot.Infrastructure
                         chatId: editingMessage.Chat.Id,
                         messageId: editingMessage.MessageId,
                         media: inputMediaPhoto,
+                        cancellationToken: cancellationToken);
+                    break;
+                case QueryMessageKeyboard keyboardMessage:
+                    //Check on message withot keyboard markup
+                    editedMesssage = await botClient.EditMessageReplyMarkupAsync(
+                        chatId: editingMessage.Chat.Id,
+                        messageId: editingMessage.MessageId,
+                        replyMarkup: keyboardMessage.ToMarkup(),
                         cancellationToken: cancellationToken);
                     break;
                 default:

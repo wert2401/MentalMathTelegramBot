@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace MentalMathTelegramBot.Controllers
 {
-    [Path("/hello")]
+    [Path("/learn")]
     public class HelloMessageController : BaseMessageController
     {
         private readonly ILogger<HelloMessageController> logger;
