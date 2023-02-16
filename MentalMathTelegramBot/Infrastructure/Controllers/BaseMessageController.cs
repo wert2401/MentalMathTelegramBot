@@ -27,7 +27,8 @@ namespace MentalMathTelegramBot.Infrastructure.Controllers
         /// <returns></returns>
         protected async Task<Message> EditMessageAsync(Message editingMessage, IMessage newMessage)
         {
-            return await Context.Bot.EditMessageAsyc(editingMessage, newMessage);
+            Context.RequestMessage = editingMessage;
+            return await Context.Bot.EditMessageAsyc(Context, newMessage);
         }
     }
 }

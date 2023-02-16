@@ -1,7 +1,8 @@
 ﻿using MentalMathTelegramBot.Infrastructure.Messages.Interfaces;
+using MentalMathTelegramBot.Infrastructure.Messages.Queries;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace MentalMathTelegramBot.Infrastructure.Messages.Queries
+namespace MentalMathTelegramBot.Infrastructure.Messages
 {
     public class QueryMessageKeyboard : IMessage
     {

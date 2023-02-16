@@ -1,5 +1,6 @@
 ﻿using MentalMathTelegramBot.Infrastructure.Attributes;
 using MentalMathTelegramBot.Infrastructure.Controllers;
+using MentalMathTelegramBot.Infrastructure.Messages;
 using MentalMathTelegramBot.Infrastructure.Messages.Queries;
 
 namespace MentalMathTelegramBot.Controllers

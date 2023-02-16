@@ -11,6 +11,8 @@ using Telegram.Bot.Types.Enums;
 using MentalMathTelegramBot.Infrastructure.Controllers.Interfaces;
 using MentalMathTelegramBot.Infrastructure.Messages.Interfaces;
 using MentalMathTelegramBot.Infrastructure.Messages.Queries;
+using MentalMathTelegramBot.Infrastructure.Responses;
+using Telegram.Bot.Requests;
 
 namespace MentalMathTelegramBot.Infrastructure
 {
@@ -21,6 +23,8 @@ namespace MentalMathTelegramBot.Infrastructure
         private TelegramBotClient botClient;
         private CancellationTokenSource cts = new();
         private ReceiverOptions receiverOptions;
+
+        private DateTime startedTime;
 
         private string? adminChatId { get; init; }
 
@@ -47,6 +51,8 @@ namespace MentalMathTelegramBot.Infrastructure
 
         public void Start()
         {
+            cts = new CancellationTokenSource();
+            startedTime = DateTime.Now.ToUniversalTime();
             logger?.LogInformation("Bot started...");
             botClient.StartReceiving(
                 updateHandler: HandleUpdateAsync,
@@ -56,14 +62,26 @@ namespace MentalMathTelegramBot.Infrastructure
             );
         }
 
+        /// <summary>
+        /// Sends a new message.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="message"></param>
+        /// <returns></returns>
         public async Task<Message> SendMessageAsync(IUpdateContext context, IMessage message)
         {
             return await ResolveResponseAsync(context, message, cts.Token);
         }
 
-        public async Task<Message> EditMessageAsyc(Message editingMessage, IMessage newMessage)
+        /// <summary>
+        /// Edit existing message. Note if you want to edit just a text, then you need to use <see cref="TextMessage"/>, so on with other messages types.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="newMessage"></param>
+        /// <returns></returns>
+        public async Task<Message> EditMessageAsyc(IUpdateContext context, IMessage newMessage)
         {
-            return await ResovleEditingAsync(editingMessage, newMessage, cts.Token);
+            return await ResovleEditingAsync(context, newMessage, cts.Token);
         }
 
         /// <summary>
@@ -75,10 +93,10 @@ namespace MentalMathTelegramBot.Infrastructure
         /// <returns></returns>
         async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
-            if (update.Message is { } message)
+            if (update.Message is { } message && message.Date >= startedTime)
                 await HandleMessageUpdateAsync(message, cancellationToken);
 
-            if (update.CallbackQuery is { } query)
+            if (update.CallbackQuery is { } query && query.Message?.Date >= startedTime)
                 await HandleQueryUpdateAsync(query, cancellationToken);
         }
 
@@ -130,8 +148,11 @@ namespace MentalMathTelegramBot.Infrastructure
 
             if (!string.IsNullOrEmpty(adminChatId))
                 await botClient.SendTextMessageAsync(adminChatId, ErrorMessage);
-        }
 
+            cts.Cancel();
+
+            Start();
+        }
 
         /// <summary>
         /// Resolve controller using <paramref name="path"/> and <see cref="PathAttribute"/>
@@ -154,83 +175,37 @@ namespace MentalMathTelegramBot.Infrastructure
         }
 
         /// <summary>
-        /// Depending on <paramref name="responseMessage"/> sends a message in chat from <paramref name="requestMessage"/>
+        /// Depending on <paramref name="responseMessage"/> sends a message in chat from <paramref name="requestContext"/>
         /// </summary>
-        /// <param name="requestMessage">Message came from telegram</param>
+        /// <param name="requestContext"></param>
         /// <param name="responseMessage">Response message from resolved controller</param>
         /// <param name="cancellationToken">Cancelation token</param>
         /// <returns></returns>
         async Task<Message> ResolveResponseAsync(IUpdateContext requestContext, IMessage responseMessage, CancellationToken cancellationToken)
         {
-            Message sendedMessage = new Message();
-            switch (responseMessage)
-            {
-                case TextMessage textMessage:
-                    sendedMessage = await botClient.SendTextMessageAsync(
-                        chatId: requestContext.RequestMessage.Chat.Id,
-                        text: textMessage.Text,
-                        cancellationToken: cancellationToken);
-                    break;
-                case PhotoMessage photoMessage:
-                    sendedMessage = await botClient.SendPhotoAsync(
-                        chatId: requestContext.RequestMessage.Chat.Id,
-                        photo: photoMessage.Photo,
-                        caption: photoMessage.Text,
-                        cancellationToken: cancellationToken);
-                    break;
-                case QueryMessageKeyboard keyboardMessage:
-                    sendedMessage = await botClient.SendTextMessageAsync(
-                        chatId: requestContext.RequestMessage.Chat.Id,
-                        text: keyboardMessage.Text,
-                        replyMarkup: keyboardMessage.ToMarkup(),
-                        cancellationToken: cancellationToken);
-                    break;
-                default:
-                    break;
-            }
+            var response = ResponseFactory.CreateResponse(botClient, requestContext.RequestMessage, responseMessage, cancellationToken);
 
-            if (requestContext is QueryContext queryContext)
-                await botClient.AnswerCallbackQueryAsync(queryContext.Query.Id);
+            if (requestContext is QueryContext queryContext && (DateTime.Now.ToUniversalTime() - queryContext.RequestMessage.Date).TotalSeconds < 15)
+                await botClient.AnswerCallbackQueryAsync(queryContext.Query.Id, cancellationToken: cancellationToken);
 
-            return sendedMessage;
+            return await response.SendAsync();
         }
 
-        async Task<Message> ResovleEditingAsync(Message editingMessage, IMessage newMessage, CancellationToken cancellationToken)
+        /// <summary>
+        /// Depending on <paramref name="newMessage"/> edit the old message in chat from <paramref name="requestContext"/>
+        /// </summary>
+        /// <param name="requestContext"></param>
+        /// <param name="newMessage"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        async Task<Message> ResovleEditingAsync(IUpdateContext requestContext, IMessage newMessage, CancellationToken cancellationToken)
         {
-            Message editedMesssage = new Message();
-            switch (newMessage)
-            {
-                case TextMessage textMessage:
-                    editedMesssage = await botClient.EditMessageTextAsync(
-                        chatId: editingMessage.Chat.Id,
-                        messageId: editingMessage.MessageId,
-                        text: textMessage.Text,
-                        cancellationToken: cancellationToken);
-                    break;
-                case PhotoMessage photoMessage:
-                    //Bug: when editing message does not have media, telegram sents exception
-                    InputMediaPhoto inputMediaPhoto = new InputMediaPhoto(new InputMedia(photoMessage.Stream, "photo"));
-                    inputMediaPhoto.Caption = photoMessage.Text;
+            var response = ResponseFactory.CreateResponse(botClient, requestContext.RequestMessage, newMessage, cancellationToken);
 
-                    editedMesssage = await botClient.EditMessageMediaAsync(
-                        chatId: editingMessage.Chat.Id,
-                        messageId: editingMessage.MessageId,
-                        media: inputMediaPhoto,
-                        cancellationToken: cancellationToken);
-                    break;
-                case QueryMessageKeyboard keyboardMessage:
-                    //Check on message withot keyboard markup
-                    editedMesssage = await botClient.EditMessageReplyMarkupAsync(
-                        chatId: editingMessage.Chat.Id,
-                        messageId: editingMessage.MessageId,
-                        replyMarkup: keyboardMessage.ToMarkup(),
-                        cancellationToken: cancellationToken);
-                    break;
-                default:
-                    break;
-            }
+            if (requestContext is QueryContext queryContext && (DateTime.Now.ToUniversalTime() - queryContext.RequestMessage.Date).TotalSeconds < 15)
+                await botClient.AnswerCallbackQueryAsync(queryContext.Query.Id, cancellationToken: cancellationToken);
 
-            return editedMesssage;
+            return await response.EditAsync();
         }
     }
 }
