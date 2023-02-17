@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32819.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MentalMathTelegramBot", "MentalMathTelegramBot\MentalMathTelegramBot.csproj", "{98D4E537-C49C-4B2D-962A-B7BD13B706BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MentalMathTelegramBot.Infrastructure", "MentalMathTelegramBot.Infrastructure\MentalMathTelegramBot.Infrastructure.csproj", "{28BDA02C-DC4E-4BBB-B30D-8036482387C3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MentalMathTelegramBot.Controllers", "MentalMathTelegramBot.Controllers\MentalMathTelegramBot.Controllers.csproj", "{4AAFCBF3-9318-43B3-B32A-284C54577D5C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{98D4E537-C49C-4B2D-962A-B7BD13B706BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{98D4E537-C49C-4B2D-962A-B7BD13B706BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{98D4E537-C49C-4B2D-962A-B7BD13B706BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{98D4E537-C49C-4B2D-962A-B7BD13B706BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28BDA02C-DC4E-4BBB-B30D-8036482387C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28BDA02C-DC4E-4BBB-B30D-8036482387C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28BDA02C-DC4E-4BBB-B30D-8036482387C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28BDA02C-DC4E-4BBB-B30D-8036482387C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4AAFCBF3-9318-43B3-B32A-284C54577D5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AAFCBF3-9318-43B3-B32A-284C54577D5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AAFCBF3-9318-43B3-B32A-284C54577D5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AAFCBF3-9318-43B3-B32A-284C54577D5C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
