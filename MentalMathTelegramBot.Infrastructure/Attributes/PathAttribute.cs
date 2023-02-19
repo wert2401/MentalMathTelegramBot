@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 namespace MentalMathTelegramBot.Infrastructure.Attributes
 {
     /// <summary>
-    /// Attribute for declarinng path in bot`s controllers
+    /// Attribute for declarinng path in bot`s controllers. 
+    /// If <see cref="Path"/>="*", this controller will be routed if request message did not contain "/".
     /// </summary>
     public class PathAttribute : Attribute
     {
