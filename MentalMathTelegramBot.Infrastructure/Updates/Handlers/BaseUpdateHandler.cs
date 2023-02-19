@@ -22,6 +22,9 @@ namespace MentalMathTelegramBot.Infrastructure.Updates.Handlers
             string path = matches.Groups["path"].Value;
             string paramsString = matches.Groups["params"].Value.Replace("?", "");
 
+            if (string.IsNullOrEmpty(path))
+                path = "*";
+
             if (string.IsNullOrEmpty(paramsString))
                 return (path, null);
 
