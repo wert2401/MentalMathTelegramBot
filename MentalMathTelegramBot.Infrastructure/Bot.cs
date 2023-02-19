@@ -136,7 +136,7 @@ namespace MentalMathTelegramBot.Infrastructure
 
         async Task<BaseResponse> CreateResponse(IUpdateContext requestContext, IMessage newMessage, CancellationToken cancellationToken)
         {
-            if (requestContext is QueryContext queryContext && (DateTime.Now.ToUniversalTime() - queryContext.RequestMessage.Date).TotalSeconds < 15)
+            if (requestContext is QueryContext queryContext && (DateTime.Now.ToUniversalTime() - queryContext.Query.Message!.Date).TotalSeconds < 15)
                 await botClient.AnswerCallbackQueryAsync(queryContext.Query.Id, cancellationToken: cancellationToken);
 
             return ResponseFactory.CreateResponse(botClient, requestContext.RequestMessage, newMessage, cancellationToken);

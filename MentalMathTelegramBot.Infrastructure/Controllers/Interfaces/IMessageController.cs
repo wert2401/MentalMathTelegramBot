@@ -1,6 +1,4 @@
-﻿using MentalMathTelegramBot.Infrastructure.Messages;
-using MentalMathTelegramBot.Infrastructure.Messages.Interfaces;
-using MentalMathTelegramBot.Infrastructure.Updates.Interfaces;
+﻿using MentalMathTelegramBot.Infrastructure.Updates.Interfaces;
 
 namespace MentalMathTelegramBot.Infrastructure.Controllers.Interfaces
 {
@@ -8,5 +6,6 @@ namespace MentalMathTelegramBot.Infrastructure.Controllers.Interfaces
     {
         public IUpdateContext Context { get; set; }
         public Task DoAction();
+        public Task DoAction(Dictionary<string, string>? parameters = null);
     }
 }

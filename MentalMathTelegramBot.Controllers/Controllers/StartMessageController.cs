@@ -12,7 +12,7 @@ namespace MentalMathTelegramBot.Controllers
         {
             QueryMessageKeyboard messageKeyboard = new QueryMessageKeyboard($"Hello, {Context.RequestMessage.From?.FirstName} this bot will help you to learn mental math");
 
-            messageKeyboard.AddRow(new [] { new QueryKeyboardButton("Learn", "/learn"), new QueryKeyboardButton("Test", "/test") });
+            messageKeyboard.AddRow(new [] { new QueryKeyboardButton("Learn", "/learn?test=helloTest"), new QueryKeyboardButton("Test", "/test") });
 
             await SendMessageAsync(messageKeyboard);
         }

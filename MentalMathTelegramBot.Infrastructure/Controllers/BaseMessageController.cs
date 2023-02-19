@@ -1,5 +1,4 @@
 ﻿using MentalMathTelegramBot.Infrastructure.Controllers.Interfaces;
-using MentalMathTelegramBot.Infrastructure.Messages;
 using MentalMathTelegramBot.Infrastructure.Messages.Interfaces;
 using MentalMathTelegramBot.Infrastructure.Updates.Interfaces;
 using Telegram.Bot.Types;
@@ -13,7 +12,23 @@ namespace MentalMathTelegramBot.Infrastructure.Controllers
         /// </summary>
         public IUpdateContext Context { get; set; }
 
-        public abstract Task DoAction();
+        /// <summary>
+        /// Action of controller for messages without params
+        /// </summary>
+        /// <returns></returns>
+        public virtual Task DoAction()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Action of controller for messages with params
+        /// </summary>
+        /// <returns></returns>
+        public virtual Task DoAction(Dictionary<string, string>? parameters = null)
+        {
+            throw new NotImplementedException();
+        }
 
         protected async Task<Message> SendMessageAsync(IMessage message)
         {

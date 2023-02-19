@@ -14,11 +14,16 @@ namespace MentalMathTelegramBot.Infrastructure.Updates.Handlers
 
         public override async Task Action()
         {
-            IMessageController messageController = ControllerFactory.ResolveController(query.Data!);
+            (var path, var parameters) = GetPathAndParameters(query.Data!);
+
+            IMessageController messageController = ControllerFactory.ResolveController(path);
 
             messageController.Context = new QueryContext(Bot, query, query.Message!);
 
-            await messageController.DoAction();
+            if (parameters != null)
+                await messageController.DoAction(parameters);
+            else
+                await messageController.DoAction();
         }
     }
 }
