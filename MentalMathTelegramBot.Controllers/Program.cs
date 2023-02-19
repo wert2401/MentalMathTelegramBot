@@ -29,7 +29,6 @@ namespace MentalMathTelegramBot
     }
 
     /*  TODO:
-     *  - Add processing of parameters from request messages
      *  - Add processing of messages without path
      */
 }
