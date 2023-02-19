@@ -1,6 +1,5 @@
 ﻿using MentalMathTelegramBot.Infrastructure.Exceptions;
 using MentalMathTelegramBot.Infrastructure.Messages;
-using MentalMathTelegramBot.Infrastructure.Attributes;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
@@ -10,9 +9,10 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using MentalMathTelegramBot.Infrastructure.Controllers.Interfaces;
 using MentalMathTelegramBot.Infrastructure.Messages.Interfaces;
-using MentalMathTelegramBot.Infrastructure.Messages.Queries;
 using MentalMathTelegramBot.Infrastructure.Responses;
-using Telegram.Bot.Requests;
+using MentalMathTelegramBot.Infrastructure.Updates.Interfaces;
+using MentalMathTelegramBot.Infrastructure.Updates;
+using MentalMathTelegramBot.Infrastructure.Updates.Handlers;
 
 namespace MentalMathTelegramBot.Infrastructure
 {
@@ -24,12 +24,12 @@ namespace MentalMathTelegramBot.Infrastructure
         private CancellationTokenSource cts = new();
         private ReceiverOptions receiverOptions;
 
-        private DateTime startedTime;
-
         private string? adminChatId { get; init; }
 
         const string TG_TOKEN_KEY = "tgBotToken";
         const string TG_ADMINID_KEY = "adminChat";
+
+        public DateTime StartedTime { get; private set; }
 
         public Bot(IConfigurationRoot config, IControllerFactory controllerFactory, ILogger? logger)
         {
@@ -52,7 +52,7 @@ namespace MentalMathTelegramBot.Infrastructure
         public void Start()
         {
             cts = new CancellationTokenSource();
-            startedTime = DateTime.Now.ToUniversalTime();
+            StartedTime = DateTime.Now.ToUniversalTime();
             logger?.LogInformation("Bot started...");
             botClient.StartReceiving(
                 updateHandler: HandleUpdateAsync,
@@ -70,7 +70,8 @@ namespace MentalMathTelegramBot.Infrastructure
         /// <returns></returns>
         public async Task<Message> SendMessageAsync(IUpdateContext context, IMessage message)
         {
-            return await ResolveResponseAsync(context, message, cts.Token);
+            var response = await CreateResponse(context, message, cts.Token);
+            return await response.SendAsync();
         }
 
         /// <summary>
@@ -81,7 +82,8 @@ namespace MentalMathTelegramBot.Infrastructure
         /// <returns></returns>
         public async Task<Message> EditMessageAsyc(IUpdateContext context, IMessage newMessage)
         {
-            return await ResovleEditingAsync(context, newMessage, cts.Token);
+            var response = await CreateResponse(context, newMessage, cts.Token);
+            return await response.EditAsync();
         }
 
         /// <summary>
@@ -93,39 +95,9 @@ namespace MentalMathTelegramBot.Infrastructure
         /// <returns></returns>
         async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
-            if (update.Message is { } message && message.Date >= startedTime)
-                await HandleMessageUpdateAsync(message, cancellationToken);
+            BaseUpdateHandler updateHandler = UpdateHandlersFactory.CreateUpdateHandler(this, update, controllerFactory);
 
-            if (update.CallbackQuery is { } query && query.Message?.Date >= startedTime)
-                await HandleQueryUpdateAsync(query, cancellationToken);
-        }
-
-        async Task HandleMessageUpdateAsync(Message message, CancellationToken cancellationToken)
-        {
-            if (message.Text is not { } messageText)
-                return;
-
-            logger?.LogInformation($"Received a '{messageText}' message in chat {message.Chat.Id}.");
-
-            IMessageController messageController = ResolveController(messageText);
-
-            messageController.Context = new MessageContext(this, message);
-
-            await messageController.DoAction();
-        }
-
-        async Task HandleQueryUpdateAsync(CallbackQuery query, CancellationToken cancellationToken)
-        {
-            if (query.Data is not { } messageText)
-                return;
-
-            logger?.LogInformation($"Received a '{messageText}' query in chat {query.Message?.Chat.Id}.");
-
-            IMessageController messageController = ResolveController(messageText);
-
-            messageController.Context = new QueryContext(this, query, query.Message);
-
-            await messageController.DoAction();
+            await updateHandler.Action();
         }
 
         /// <summary>
@@ -144,7 +116,7 @@ namespace MentalMathTelegramBot.Infrastructure
                 _ => exception.ToString()
             };
 
-            logger?.LogCritical(ErrorMessage + Environment.NewLine + "Reload the bot...");
+            logger?.LogCritical(ErrorMessage + Environment.NewLine + "Restarting the bot...");
 
             if (!string.IsNullOrEmpty(adminChatId))
                 await botClient.SendTextMessageAsync(adminChatId, ErrorMessage);
@@ -155,57 +127,19 @@ namespace MentalMathTelegramBot.Infrastructure
         }
 
         /// <summary>
-        /// Resolve controller using <paramref name="path"/> and <see cref="PathAttribute"/>
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        IMessageController ResolveController(string path)
-        {
-            return controllerFactory.ResolveController(path);
-        }
-
-        /// <summary>
-        /// Resolve controller using <paramref name="type"/>
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        IMessageController ResolveController(Type type)
-        {
-            return controllerFactory.ResolveController(type);
-        }
-
-        /// <summary>
         /// Depending on <paramref name="responseMessage"/> sends a message in chat from <paramref name="requestContext"/>
         /// </summary>
         /// <param name="requestContext"></param>
         /// <param name="responseMessage">Response message from resolved controller</param>
         /// <param name="cancellationToken">Cancelation token</param>
         /// <returns></returns>
-        async Task<Message> ResolveResponseAsync(IUpdateContext requestContext, IMessage responseMessage, CancellationToken cancellationToken)
-        {
-            var response = ResponseFactory.CreateResponse(botClient, requestContext.RequestMessage, responseMessage, cancellationToken);
 
+        async Task<BaseResponse> CreateResponse(IUpdateContext requestContext, IMessage newMessage, CancellationToken cancellationToken)
+        {
             if (requestContext is QueryContext queryContext && (DateTime.Now.ToUniversalTime() - queryContext.RequestMessage.Date).TotalSeconds < 15)
                 await botClient.AnswerCallbackQueryAsync(queryContext.Query.Id, cancellationToken: cancellationToken);
 
-            return await response.SendAsync();
-        }
-
-        /// <summary>
-        /// Depending on <paramref name="newMessage"/> edit the old message in chat from <paramref name="requestContext"/>
-        /// </summary>
-        /// <param name="requestContext"></param>
-        /// <param name="newMessage"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        async Task<Message> ResovleEditingAsync(IUpdateContext requestContext, IMessage newMessage, CancellationToken cancellationToken)
-        {
-            var response = ResponseFactory.CreateResponse(botClient, requestContext.RequestMessage, newMessage, cancellationToken);
-
-            if (requestContext is QueryContext queryContext && (DateTime.Now.ToUniversalTime() - queryContext.RequestMessage.Date).TotalSeconds < 15)
-                await botClient.AnswerCallbackQueryAsync(queryContext.Query.Id, cancellationToken: cancellationToken);
-
-            return await response.EditAsync();
+            return ResponseFactory.CreateResponse(botClient, requestContext.RequestMessage, newMessage, cancellationToken);
         }
     }
 }

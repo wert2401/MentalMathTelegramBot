@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MentalMathTelegramBot.Infrastructure;
+using MentalMathTelegramBot.Infrastructure.Extension;
 
 namespace MentalMathTelegramBot
 {
@@ -17,6 +18,7 @@ namespace MentalMathTelegramBot
             BotBuilder botBuilder = new BotBuilder();
 
             botBuilder.Services.AddLogging(logging => logging.AddConsole());
+            botBuilder.Services.RegisterControllers();
 
             Bot bot = botBuilder.Build(config);
 
@@ -27,7 +29,7 @@ namespace MentalMathTelegramBot
     }
 
     /*  TODO:
-     *  - Refactor resovling response
      *  - Add processing of parameters from request messages
+     *  - Add processing of messages without path
      */
 }

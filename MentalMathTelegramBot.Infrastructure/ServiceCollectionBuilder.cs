@@ -18,7 +18,7 @@ namespace MentalMathTelegramBot.Infrastructure
 
         public ServiceProvider Build(IConfigurationRoot configuration)
         {
-            RegisterControllers(Services);
+            //RegisterControllers(Services);
 
             Services.AddSingleton<Bot>(p => new Bot(configuration, p.GetRequiredService<IControllerFactory>(), p.GetService<ILogger<Bot>>()));
 
@@ -28,18 +28,18 @@ namespace MentalMathTelegramBot.Infrastructure
         /// <summary>
         /// Registration of <see cref="ControllerFactory"/> and controllers in assembly
         /// </summary>
-        /// <param name="builder"></param>
-        private void RegisterControllers(ServiceCollection builder)
-        {
-            Type controllerBaseType = typeof(IMessageController);
-            var dataAccess = Assembly.GetExecutingAssembly();
+        /// <param name="services"></param>
+        //private void RegisterControllers(ServiceCollection services)
+        //{
+        //    Type controllerBaseType = typeof(IMessageController);
+        //    var dataAccess = Assembly.GetExecutingAssembly();
 
-            var controllersTypes = dataAccess.GetTypes().Where(x => x != controllerBaseType && controllerBaseType.IsAssignableFrom(x) && !x.IsAbstract);
+        //    var controllersTypes = dataAccess.GetTypes().Where(x => x != controllerBaseType && controllerBaseType.IsAssignableFrom(x) && !x.IsAbstract);
 
-            builder.AddSingleton<IControllerFactory, ControllerFactory>(p => new ControllerFactory(p, controllersTypes));
+        //    services.AddSingleton<IControllerFactory, ControllerFactory>(p => new ControllerFactory(p, controllersTypes));
 
-            foreach (var controllerType in controllersTypes)
-                builder.AddTransient(controllerType);
-        }
+        //    foreach (var controllerType in controllersTypes)
+        //        services.AddTransient(controllerType);
+        //}
     }
 }
