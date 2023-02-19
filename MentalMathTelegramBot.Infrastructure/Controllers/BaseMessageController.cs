@@ -1,6 +1,7 @@
 ﻿using MentalMathTelegramBot.Infrastructure.Controllers.Interfaces;
 using MentalMathTelegramBot.Infrastructure.Messages;
 using MentalMathTelegramBot.Infrastructure.Messages.Interfaces;
+using MentalMathTelegramBot.Infrastructure.Updates.Interfaces;
 using Telegram.Bot.Types;
 
 namespace MentalMathTelegramBot.Infrastructure.Controllers

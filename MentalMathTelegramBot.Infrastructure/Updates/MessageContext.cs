@@ -1,7 +1,7 @@
-﻿using MentalMathTelegramBot.Infrastructure.Controllers.Interfaces;
+﻿using MentalMathTelegramBot.Infrastructure.Updates.Interfaces;
 using Telegram.Bot.Types;
 
-namespace MentalMathTelegramBot.Infrastructure.Messages
+namespace MentalMathTelegramBot.Infrastructure.Updates
 {
     public class MessageContext : IUpdateContext
     {

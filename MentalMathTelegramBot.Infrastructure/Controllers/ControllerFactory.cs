@@ -2,7 +2,6 @@
 using MentalMathTelegramBot.Infrastructure.Controllers.Interfaces;
 using MentalMathTelegramBot.Infrastructure.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
-using System.IO;
 using System.Reflection;
 
 namespace MentalMathTelegramBot.Infrastructure.Controllers

@@ -1,12 +1,12 @@
 ﻿using Telegram.Bot.Types;
 
-namespace MentalMathTelegramBot.Infrastructure.Controllers.Interfaces
+namespace MentalMathTelegramBot.Infrastructure.Updates.Interfaces
 {
     public interface IUpdateContext
     {
         public Bot Bot { get; init; }
         /// <summary>
-        /// Updated after editing message. Edited message becomes <see cref="RequestMessage"/>
+        /// Request message that came from telegram. Edited message becomes <see cref="RequestMessage"/>
         /// </summary>
         public Message RequestMessage { get; set; }
     }

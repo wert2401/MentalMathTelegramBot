@@ -1,7 +1,7 @@
-﻿using MentalMathTelegramBot.Infrastructure.Controllers.Interfaces;
+﻿using MentalMathTelegramBot.Infrastructure.Updates.Interfaces;
 using Telegram.Bot.Types;
 
-namespace MentalMathTelegramBot.Infrastructure.Messages.Queries
+namespace MentalMathTelegramBot.Infrastructure.Updates
 {
     public class QueryContext : IUpdateContext
     {
