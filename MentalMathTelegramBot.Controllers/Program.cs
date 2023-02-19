@@ -27,8 +27,4 @@ namespace MentalMathTelegramBot
             Console.ReadLine();
         }
     }
-
-    /*  TODO:
-     *  - Add processing of messages without path
-     */
 }

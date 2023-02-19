@@ -1,12 +1,6 @@
 ﻿using MentalMathTelegramBot.Infrastructure.Exceptions;
 using MentalMathTelegramBot.Infrastructure.Messages;
 using MentalMathTelegramBot.Infrastructure.Messages.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
@@ -26,7 +20,7 @@ namespace MentalMathTelegramBot.Infrastructure.Responses
             return BotClient.SendTextMessageAsync(
                         chatId: RequestMessage.Chat.Id,
                         text: keyboardMessage.Text,
-                        replyMarkup: keyboardMessage.ToMarkup(),
+                        replyMarkup: keyboardMessage.GetMarkup(),
                         cancellationToken: CancellationToken);
         }
 
@@ -40,7 +34,7 @@ namespace MentalMathTelegramBot.Infrastructure.Responses
             return BotClient.EditMessageReplyMarkupAsync(
                         chatId: RequestMessage.Chat.Id,
                         messageId: RequestMessage.MessageId,
-                        replyMarkup: keyboardMessage.ToMarkup(),
+                        replyMarkup: keyboardMessage.GetMarkup(),
                         cancellationToken: CancellationToken);
         }
     }
