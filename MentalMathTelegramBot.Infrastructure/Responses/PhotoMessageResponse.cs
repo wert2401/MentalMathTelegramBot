@@ -8,7 +8,7 @@ namespace MentalMathTelegramBot.Infrastructure.Responses
 {
     public class PhotoMessageResponse : BaseResponse
     {
-        public PhotoMessageResponse(TelegramBotClient botClient, Message requestMessage, IMessage responseMessage, CancellationToken cancellationToken) 
+        public PhotoMessageResponse(TelegramBotClient botClient, Message requestMessage, IMessage responseMessage, CancellationToken cancellationToken)
             : base(botClient, requestMessage, responseMessage, cancellationToken)
         {
         }
@@ -17,11 +17,19 @@ namespace MentalMathTelegramBot.Infrastructure.Responses
         {
             PhotoMessage photoMessage = (PhotoMessage)ResponseMessage;
 
-            return BotClient.SendPhotoAsync(
-                        chatId: RequestMessage.Chat.Id,
-                        photo: photoMessage.Photo,
-                        caption: photoMessage.Text,
-                        cancellationToken: CancellationToken);
+            if (photoMessage.HasMarkup)
+                return BotClient.SendPhotoAsync(
+                            chatId: RequestMessage.Chat.Id,
+                            photo: photoMessage.Photo,
+                            caption: photoMessage.Text,
+                            replyMarkup: photoMessage.GetMarkup(),
+                            cancellationToken: CancellationToken);
+            else
+                return BotClient.SendPhotoAsync(
+                            chatId: RequestMessage.Chat.Id,
+                            photo: photoMessage.Photo,
+                            caption: photoMessage.Text,
+                            cancellationToken: CancellationToken);
         }
 
         public override Task<Message> EditAsync()
@@ -34,11 +42,19 @@ namespace MentalMathTelegramBot.Infrastructure.Responses
             InputMediaPhoto inputMediaPhoto = new InputMediaPhoto(new InputMedia(photoMessage.Stream, "photo"));
             inputMediaPhoto.Caption = photoMessage.Text;
 
-            return BotClient.EditMessageMediaAsync(
-                chatId: RequestMessage.Chat.Id,
-                messageId: RequestMessage.MessageId,
-                media: inputMediaPhoto,
-                cancellationToken: CancellationToken);
+            if (photoMessage.HasMarkup)
+                return BotClient.EditMessageMediaAsync(
+                    chatId: RequestMessage.Chat.Id,
+                    messageId: RequestMessage.MessageId,
+                    media: inputMediaPhoto,
+                    replyMarkup: photoMessage.GetMarkup(),
+                    cancellationToken: CancellationToken);
+            else
+                return BotClient.EditMessageMediaAsync(
+                    chatId: RequestMessage.Chat.Id,
+                    messageId: RequestMessage.MessageId,
+                    media: inputMediaPhoto,
+                    cancellationToken: CancellationToken);
         }
     }
 }

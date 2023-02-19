@@ -3,9 +3,8 @@ using Telegram.Bot.Types.InputFiles;
 
 namespace MentalMathTelegramBot.Infrastructure.Messages
 {
-    public class PhotoMessage : IMediaMessage
+    public class PhotoMessage : QueryMessageKeyboard, IMediaMessage
     {
-        public string Text { get; set; }
         public InputOnlineFile Photo { get; private set; }
         /// <summary>
         /// Represents data stream of media message
@@ -18,5 +17,7 @@ namespace MentalMathTelegramBot.Infrastructure.Messages
             Stream = photoStream;
             Photo = new InputOnlineFile(photoStream);
         }
+
+        public bool HasMarkup { get => Rows.Count > 0; }
     }
 }

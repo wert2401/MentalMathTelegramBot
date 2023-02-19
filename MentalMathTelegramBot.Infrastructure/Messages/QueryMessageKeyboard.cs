@@ -6,12 +6,11 @@ namespace MentalMathTelegramBot.Infrastructure.Messages
 {
     public class QueryMessageKeyboard : IMessage
     {
-        public List<IEnumerable<QueryKeyboardButton>> Rows { get; private set; }
+        public List<IEnumerable<QueryKeyboardButton>> Rows { get; private set; } = new List<IEnumerable<QueryKeyboardButton>>();
         public string Text { get; set; }
 
         public QueryMessageKeyboard(string text = "")
         {
-            Rows = new List<IEnumerable<QueryKeyboardButton>>();
             Text = text;
         }
 
@@ -20,7 +19,7 @@ namespace MentalMathTelegramBot.Infrastructure.Messages
             Rows.Add(buttons);
         }
 
-        public InlineKeyboardMarkup ToMarkup()
+        public InlineKeyboardMarkup GetMarkup()
         {
             return new InlineKeyboardMarkup(Rows.Select(r => r.Select(b => InlineKeyboardButton.WithCallbackData(b.Text, b.Data))));
         }
