@@ -25,5 +25,16 @@ namespace MentalMathTelegramBot.Controllers
 
             await EditMessageAsync(msg, new TextMessage("edited message"));
         }
+
+        public override async Task DoAction(Dictionary<string, string>? parameters = null)
+        {
+            logger.LogInformation("Hello controller");
+
+            var msg = await SendMessageAsync(new TextMessage("Hello"));
+
+            await Task.Delay(500);
+
+            await EditMessageAsync(msg, new TextMessage(parameters != null ? parameters["test"] : "no"));
+        }
     }
 }
