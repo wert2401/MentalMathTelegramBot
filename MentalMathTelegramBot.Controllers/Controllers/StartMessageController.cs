@@ -12,8 +12,8 @@ namespace MentalMathTelegramBot.Controllers
         {
             TextMessage messageKeyboard = new TextMessage($"Привет, {Context.RequestMessage.From?.FirstName} этот бот поможет тебе в изучении ментальной арифметики");
 
-            messageKeyboard.AddRow(new [] { new QueryKeyboardButton("Теория", "/theory") });
-            messageKeyboard.AddRow(new [] { new QueryKeyboardButton("Тестирование", "/test") });
+            messageKeyboard.AddKeyboardRow(new [] { new QueryKeyboardButton("Теория", "/theory") });
+            messageKeyboard.AddKeyboardRow(new [] { new QueryKeyboardButton("Тестирование", "/testMenu") });
 
             await SendMessageAsync(messageKeyboard);
         }

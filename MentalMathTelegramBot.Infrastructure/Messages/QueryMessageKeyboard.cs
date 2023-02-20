@@ -14,7 +14,7 @@ namespace MentalMathTelegramBot.Infrastructure.Messages
             Text = text;
         }
 
-        public void AddRow(IEnumerable<QueryKeyboardButton> buttons)
+        public void AddKeyboardRow(IEnumerable<QueryKeyboardButton> buttons)
         {
             Rows.Add(buttons);
         }

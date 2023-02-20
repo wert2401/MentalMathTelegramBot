@@ -33,17 +33,17 @@ namespace MentalMathTelegramBot.Controllers
                 var curMessage = theoryMessages[i];
 
                 if (i == 0)
-                    curMessage.AddRow(new List<QueryKeyboardButton> { new QueryKeyboardButton("Следующая страница", "/theory?page=1") });
+                    curMessage.AddKeyboardRow(new List<QueryKeyboardButton> { new QueryKeyboardButton("Следующая страница", "/theory?page=1") });
                 else if (i == theoryMessages.Count - 1)
-                    curMessage.AddRow(new List<QueryKeyboardButton> { new QueryKeyboardButton("Предыдущая страница", $"/theory?page={i - 1}") });
+                    curMessage.AddKeyboardRow(new List<QueryKeyboardButton> { new QueryKeyboardButton("Предыдущая страница", $"/theory?page={i - 1}") });
                 else
-                    curMessage.AddRow(new List<QueryKeyboardButton>
+                    curMessage.AddKeyboardRow(new List<QueryKeyboardButton>
                 {
                     new QueryKeyboardButton("Предыдущая страница", $"/theory?page={i - 1}"),
                     new QueryKeyboardButton("Следующая страница", $"/theory?page={i + 1}")
                 });
 
-                curMessage.AddRow(new List<QueryKeyboardButton> { new QueryKeyboardButton("Вернуться в главное меню", "/start") });
+                curMessage.AddKeyboardRow(new List<QueryKeyboardButton> { new QueryKeyboardButton("Вернуться в главное меню", "/start") });
             }
         }
 
