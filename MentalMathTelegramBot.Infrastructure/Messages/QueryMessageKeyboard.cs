@@ -4,7 +4,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace MentalMathTelegramBot.Infrastructure.Messages
 {
-    public class QueryMessageKeyboard : IMessage
+    public abstract class QueryMessageKeyboard : IMessage
     {
         public List<IEnumerable<QueryKeyboardButton>> Rows { get; private set; } = new List<IEnumerable<QueryKeyboardButton>>();
         public string Text { get; set; }
@@ -23,5 +23,7 @@ namespace MentalMathTelegramBot.Infrastructure.Messages
         {
             return new InlineKeyboardMarkup(Rows.Select(r => r.Select(b => InlineKeyboardButton.WithCallbackData(b.Text, b.Data))));
         }
+
+        public bool HasMarkup { get => Rows.Count > 0; }
     }
 }

@@ -2,10 +2,8 @@
 
 namespace MentalMathTelegramBot.Infrastructure.Messages
 {
-    public class TextMessage : IMessage
+    public class TextMessage : QueryMessageKeyboard, IMessage
     {
-        public string Text { get; set; }
-
         public TextMessage(string text)
         {
             Text = text;

@@ -17,7 +17,5 @@ namespace MentalMathTelegramBot.Infrastructure.Messages
             Stream = photoStream;
             Photo = new InputOnlineFile(photoStream);
         }
-
-        public bool HasMarkup { get => Rows.Count > 0; }
     }
 }

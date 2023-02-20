@@ -18,8 +18,6 @@ namespace MentalMathTelegramBot.Infrastructure.Responses
                     return new TextMessageResponse(botClient, requestMessage, responseMessage, cancellationToken);
                 case PhotoMessage:
                     return new PhotoMessageResponse(botClient, requestMessage, responseMessage, cancellationToken);
-                case QueryMessageKeyboard:
-                    return new QueryMessageKeyboardResponse(botClient, requestMessage, responseMessage, cancellationToken);
             }
 
 

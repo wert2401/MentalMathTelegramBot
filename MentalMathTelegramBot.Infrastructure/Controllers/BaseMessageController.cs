@@ -25,7 +25,7 @@ namespace MentalMathTelegramBot.Infrastructure.Controllers
         /// Action of controller for messages with params
         /// </summary>
         /// <returns></returns>
-        public virtual Task DoAction(Dictionary<string, string>? parameters = null)
+        public virtual Task DoAction(Dictionary<string, string> parameters)
         {
             throw new NotImplementedException();
         }

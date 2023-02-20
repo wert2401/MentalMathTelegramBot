@@ -6,6 +6,6 @@ namespace MentalMathTelegramBot.Infrastructure.Controllers.Interfaces
     {
         public IUpdateContext Context { get; set; }
         public Task DoAction();
-        public Task DoAction(Dictionary<string, string>? parameters = null);
+        public Task DoAction(Dictionary<string, string> parameters);
     }
 }
