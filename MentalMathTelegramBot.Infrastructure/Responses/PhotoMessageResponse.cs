@@ -19,17 +19,17 @@ namespace MentalMathTelegramBot.Infrastructure.Responses
 
             if (photoMessage.HasMarkup)
                 return BotClient.SendPhotoAsync(
-                            chatId: RequestMessage.Chat.Id,
-                            photo: photoMessage.Photo,
-                            caption: photoMessage.Text,
-                            replyMarkup: photoMessage.GetMarkup(),
-                            cancellationToken: CancellationToken);
+                    chatId: RequestMessage.Chat.Id,
+                    photo: photoMessage.Photo,
+                    caption: photoMessage.Text,
+                    replyMarkup: photoMessage.GetMarkup(),
+                    cancellationToken: CancellationToken);
             else
                 return BotClient.SendPhotoAsync(
-                            chatId: RequestMessage.Chat.Id,
-                            photo: photoMessage.Photo,
-                            caption: photoMessage.Text,
-                            cancellationToken: CancellationToken);
+                    chatId: RequestMessage.Chat.Id,
+                    photo: photoMessage.Photo,
+                    caption: photoMessage.Text,
+                    cancellationToken: CancellationToken);
         }
 
         public override Task<Message> EditAsync()

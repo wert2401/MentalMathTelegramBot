@@ -1,7 +1,6 @@
 ﻿using MentalMathTelegramBot.Infrastructure.Exceptions;
 using MentalMathTelegramBot.Infrastructure.Messages;
 using MentalMathTelegramBot.Infrastructure.Messages.Interfaces;
-using System.Threading;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
@@ -18,10 +17,19 @@ namespace MentalMathTelegramBot.Infrastructure.Responses
         {
             TextMessage textMessage = (TextMessage)ResponseMessage;
 
-            return BotClient.SendTextMessageAsync(
-                        chatId: RequestMessage.Chat.Id,
-                        text: textMessage.Text,
-                        cancellationToken: CancellationToken);
+            if (textMessage.HasMarkup)
+                return BotClient.SendTextMessageAsync(
+                    chatId: RequestMessage.Chat.Id,
+                    text: textMessage.Text,
+                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Html,
+                    replyMarkup: textMessage.GetMarkup(),
+                    cancellationToken: CancellationToken);
+            else
+                return BotClient.SendTextMessageAsync(
+                    chatId: RequestMessage.Chat.Id,
+                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Html,
+                    text: textMessage.Text,
+                    cancellationToken: CancellationToken);
         }
 
         public override Task<Message> EditAsync()
@@ -31,11 +39,21 @@ namespace MentalMathTelegramBot.Infrastructure.Responses
             if (RequestMessage.Text == null)
                 throw new MessageDoesNotContainElementException(nameof(RequestMessage.Text));
 
-            return BotClient.EditMessageTextAsync(
-                        chatId: RequestMessage.Chat.Id,
-                        messageId: RequestMessage.MessageId,
-                        text: textMessage.Text,
-                        cancellationToken: CancellationToken);
+            if (textMessage.HasMarkup)
+                return BotClient.EditMessageTextAsync(
+                    chatId: RequestMessage.Chat.Id,
+                    messageId: RequestMessage.MessageId,
+                    text: textMessage.Text,
+                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Html,
+                    replyMarkup: textMessage.GetMarkup(),
+                    cancellationToken: CancellationToken);
+            else
+                return BotClient.EditMessageTextAsync(
+                    chatId: RequestMessage.Chat.Id,
+                    messageId: RequestMessage.MessageId,
+                    text: textMessage.Text,
+                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Html,
+                    cancellationToken: CancellationToken);
         }
     }
 }
