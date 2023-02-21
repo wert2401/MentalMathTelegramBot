@@ -2,7 +2,7 @@
 
 namespace MentalMathTelegramBot.Controllers.Data.Models
 {
-    public class TestAnswer
+    public class TestAnswer : BaseEntity
     {
         public int Id { get; set; }
         public string UserId { get; set; } = null!;

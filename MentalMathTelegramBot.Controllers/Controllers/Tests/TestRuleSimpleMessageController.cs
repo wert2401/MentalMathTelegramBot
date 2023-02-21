@@ -8,7 +8,7 @@ namespace MentalMathTelegramBot.Controllers.Controllers.Tests
     [Path("/testRuleSimple")]
     public class TestRuleSimpleMessageController : BaseMessageController
     {
-        private readonly BotDbContext dbContext;
+        private readonly UnitOfWork unitOfWork;
 
         private Dictionary<int, List<int>> allowedNumbers { get; set; } = new Dictionary<int, List<int>>()
         {
@@ -24,9 +24,9 @@ namespace MentalMathTelegramBot.Controllers.Controllers.Tests
             {9, new List<int>() { 0 } },
         };
 
-        public TestRuleSimpleMessageController(BotDbContext dbContext)
+        public TestRuleSimpleMessageController(UnitOfWork unitOfWork)
         {
-            this.dbContext = dbContext;
+            this.unitOfWork = unitOfWork;
         }
 
         public override async Task DoAction()
@@ -45,8 +45,7 @@ namespace MentalMathTelegramBot.Controllers.Controllers.Tests
                 await Task.Delay(500);
             }
 
-            dbContext.Answers.Add(new Data.Models.TestAnswer { UserId = Context.RequestMessage.Chat.Id.ToString(), Answer = sum.ToString(), TestType = Test.SimpleRule });
-            dbContext.SaveChanges();
+            unitOfWork.Add(new Data.Models.TestAnswer { UserId = Context.RequestMessage.Chat.Id.ToString(), Answer = sum.ToString(), TestType = Test.SimpleRule });
 
             await SendMessageAsync(new TextMessage($"Сумма: {sum}"));
         }

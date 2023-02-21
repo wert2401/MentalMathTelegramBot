@@ -8,6 +8,7 @@ namespace MentalMathTelegramBot.Controllers.Controllers.Tests
     public enum Test
     {
         SimpleRule,
+        AbacusNumber,
     }
 
     [Path("/testMenu")]
@@ -17,6 +18,7 @@ namespace MentalMathTelegramBot.Controllers.Controllers.Tests
         {
             var msg = new TextMessage("Выберите тест, который хотите пройти");
             msg.AddKeyboardRow(new List<QueryKeyboardButton>() { new QueryKeyboardButton("Правило просто", "/testRuleSimple") });
+            msg.AddKeyboardRow(new List<QueryKeyboardButton>() { new QueryKeyboardButton("Числа на абакусе", "/testAbacusNumbers") });
 
             await SendMessageAsync(msg);
         }

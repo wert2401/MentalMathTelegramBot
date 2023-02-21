@@ -10,7 +10,7 @@ namespace MentalMathTelegramBot.Controllers
     {
         public override async Task DoAction()
         {
-            TextMessage messageKeyboard = new TextMessage($"Привет, {Context.RequestMessage.From?.FirstName} этот бот поможет тебе в изучении ментальной арифметики");
+            TextMessage messageKeyboard = new TextMessage($"Привет, {Context.RequestMessage.Chat.FirstName}, этот бот поможет тебе в изучении ментальной арифметики");
 
             messageKeyboard.AddKeyboardRow(new [] { new QueryKeyboardButton("Теория", "/theory") });
             messageKeyboard.AddKeyboardRow(new [] { new QueryKeyboardButton("Тестирование", "/testMenu") });

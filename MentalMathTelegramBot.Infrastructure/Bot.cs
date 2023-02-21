@@ -37,7 +37,9 @@ namespace MentalMathTelegramBot.Infrastructure
             this.logger = logger;
             receiverOptions = new()
             {
-                AllowedUpdates = new[] { UpdateType.Message, UpdateType.CallbackQuery }
+                AllowedUpdates = new[] { UpdateType.Message, UpdateType.CallbackQuery },
+                ThrowPendingUpdates = true,
+                Limit = 1
             };
 
             string? BotToken = config[TG_TOKEN_KEY];
