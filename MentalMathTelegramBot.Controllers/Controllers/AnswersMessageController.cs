@@ -41,7 +41,7 @@ namespace MentalMathTelegramBot.Controllers.Controllers
             }
             else
             {
-                msg = new TextMessage("Не правильно!");
+                msg = new TextMessage($"Не правильно! \n Правильный ответ: {rightAnswer.Answer}");
             }
 
             switch (rightAnswer.TestType)
