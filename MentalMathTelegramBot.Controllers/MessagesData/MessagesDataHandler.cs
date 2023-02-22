@@ -46,7 +46,17 @@ namespace MentalMathTelegramBot.Controllers.MessagesData
 
         public TextQuestion GetRandomTheoryQuestion()
         {
-            return theoryQuestions[new Random().Next(theoryQuestions.Count)];
+            var quest = theoryQuestions[new Random().Next(theoryQuestions.Count)];
+            var rnd = new Random();
+
+            //Shuffling
+            for (int i = quest.AnswerVariants!.Count - 1; i > 0; i--)
+            {
+                int k = rnd.Next(i);
+                (quest.AnswerVariants[i], quest.AnswerVariants[k]) = (quest.AnswerVariants[k], quest.AnswerVariants[i]);
+            }
+
+            return quest;
         }
 
         public TextQuestion GetRandomFactQuestion()

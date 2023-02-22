@@ -47,7 +47,8 @@ namespace MentalMathTelegramBot.Controllers.Controllers.Tests
 
             unitOfWork.Add(new Data.Models.TestAnswer { UserId = Context.RequestMessage.Chat.Id.ToString(), Answer = sum.ToString(), TestType = Test.SimpleRule });
 
-            await SendMessageAsync(new TextMessage($"Сумма: {sum}"));
+            await SendMessageAsync(new TextMessage("Введите ответ:"));
+            //await SendMessageAsync(new TextMessage($"Сумма: {sum}"));
         }
 
         private List<int> GetSequence(int count)
