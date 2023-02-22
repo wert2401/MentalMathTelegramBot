@@ -24,7 +24,7 @@ namespace MentalMathTelegramBot.Controllers.Controllers.Tests
 
             unitOfWork.Add(new Data.Models.TestAnswer { UserId = Context.RequestMessage.Chat.Id.ToString(), Answer = quest.Answer, TestType = Test.AbacusNumber });
 
-            await SendMessageAsync(new PhotoMessage("Какое число представлено на абакусе?", File.OpenRead(quest.FileName)));
+            await SendMessageAsync(new PhotoMessage("Какое число представлено на абакусе?", File.OpenRead(quest.PhotoFileName)));
         }
     }
 }

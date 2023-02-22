@@ -22,6 +22,7 @@ namespace MentalMathTelegramBot.Infrastructure.Responses
                     chatId: RequestMessage.Chat.Id,
                     photo: photoMessage.Photo,
                     caption: photoMessage.Text,
+                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Html,
                     replyMarkup: photoMessage.GetMarkup(),
                     cancellationToken: CancellationToken);
             else
@@ -29,6 +30,7 @@ namespace MentalMathTelegramBot.Infrastructure.Responses
                     chatId: RequestMessage.Chat.Id,
                     photo: photoMessage.Photo,
                     caption: photoMessage.Text,
+                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Html,
                     cancellationToken: CancellationToken);
         }
 
@@ -41,6 +43,7 @@ namespace MentalMathTelegramBot.Infrastructure.Responses
 
             InputMediaPhoto inputMediaPhoto = new InputMediaPhoto(new InputMedia(photoMessage.Stream, "photo"));
             inputMediaPhoto.Caption = photoMessage.Text;
+            inputMediaPhoto.ParseMode = Telegram.Bot.Types.Enums.ParseMode.Html;
 
             if (photoMessage.HasMarkup)
                 return BotClient.EditMessageMediaAsync(
