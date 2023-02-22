@@ -9,6 +9,8 @@ namespace MentalMathTelegramBot.Controllers.Controllers.Tests
     {
         SimpleRule,
         AbacusNumber,
+        Theory,
+        Facts
     }
 
     [Path("/testMenu")]
@@ -17,8 +19,10 @@ namespace MentalMathTelegramBot.Controllers.Controllers.Tests
         public override async Task DoAction()
         {
             var msg = new TextMessage("Выберите тест, который хотите пройти");
-            msg.AddKeyboardRow(new List<QueryKeyboardButton>() { new QueryKeyboardButton("Правило просто", "/testRuleSimple") });
+            msg.AddKeyboardRow(new List<QueryKeyboardButton>() { new QueryKeyboardButton("Тест по теории", "/testTheory") });
+            msg.AddKeyboardRow(new List<QueryKeyboardButton>() { new QueryKeyboardButton("Тест \"правда или ложь\"", "/testFacts") });
             msg.AddKeyboardRow(new List<QueryKeyboardButton>() { new QueryKeyboardButton("Числа на абакусе", "/testAbacusNumbers") });
+            msg.AddKeyboardRow(new List<QueryKeyboardButton>() { new QueryKeyboardButton("Правило просто", "/testRuleSimple") });
 
             await SendMessageAsync(msg);
         }

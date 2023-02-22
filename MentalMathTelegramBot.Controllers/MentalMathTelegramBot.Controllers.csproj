@@ -32,76 +32,106 @@
     <None Update="botDb.db">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="MessagesData\Images\108.png">
+    <None Update="MessagesData\Images\AbacusNumberTest\108.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="MessagesData\Images\12.png">
+    <None Update="MessagesData\Images\AbacusNumberTest\12.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="MessagesData\Images\161.png">
+    <None Update="MessagesData\Images\AbacusNumberTest\161.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="MessagesData\Images\18.png">
+    <None Update="MessagesData\Images\AbacusNumberTest\18.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="MessagesData\Images\185.png">
+    <None Update="MessagesData\Images\AbacusNumberTest\185.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="MessagesData\Images\199.png">
+    <None Update="MessagesData\Images\AbacusNumberTest\199.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="MessagesData\Images\21.png">
+    <None Update="MessagesData\Images\AbacusNumberTest\21.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="MessagesData\Images\3.png">
+    <None Update="MessagesData\Images\AbacusNumberTest\3.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="MessagesData\Images\40.png">
+    <None Update="MessagesData\Images\AbacusNumberTest\40.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="MessagesData\Images\467.png">
+    <None Update="MessagesData\Images\AbacusNumberTest\467.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="MessagesData\Images\5.png">
+    <None Update="MessagesData\Images\AbacusNumberTest\5.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="MessagesData\Images\505.png">
+    <None Update="MessagesData\Images\AbacusNumberTest\505.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="MessagesData\Images\51.png">
+    <None Update="MessagesData\Images\AbacusNumberTest\51.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="MessagesData\Images\56.png">
+    <None Update="MessagesData\Images\AbacusNumberTest\56.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="MessagesData\Images\582.png">
+    <None Update="MessagesData\Images\AbacusNumberTest\582.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="MessagesData\Images\786.png">
+    <None Update="MessagesData\Images\AbacusNumberTest\786.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="MessagesData\Images\84.png">
+    <None Update="MessagesData\Images\AbacusNumberTest\84.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="MessagesData\Images\89.png">
+    <None Update="MessagesData\Images\AbacusNumberTest\89.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="MessagesData\Images\9.png">
+    <None Update="MessagesData\Images\AbacusNumberTest\9.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="MessagesData\Images\96.png">
+    <None Update="MessagesData\Images\AbacusNumberTest\96.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="MessagesData\Images\Theory\1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="MessagesData\Images\Theory\2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="MessagesData\Images\Theory\3.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="MessagesData\Images\Theory\4.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="MessagesData\Images\Theory\5.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="MessagesData\Images\Theory\6.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="MessagesData\Images\Theory\7.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="MessagesData\Images\Theory\8.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="MessagesData\Json\abacusNumbersTest.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="MessagesData\Json\factsTest.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="MessagesData\Json\theory.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="MessagesData\Json\theoryTest.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="MessagesData\Images\" />
+    <Folder Include="MessagesData\Images\Theory\" />
   </ItemGroup>
 
 </Project>

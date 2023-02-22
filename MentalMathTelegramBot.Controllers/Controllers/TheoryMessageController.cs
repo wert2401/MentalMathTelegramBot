@@ -8,15 +8,20 @@ namespace MentalMathTelegramBot.Controllers
     [Path("/theory")]
     public class TheoryMessageController : BaseMessageController
     {
-        private List<TextMessage> theoryMessages;
+        private List<PhotoMessage> theoryMessages;
 
         public TheoryMessageController(MessagesData.MessagesDataHandler dataHandler)
         {
-            theoryMessages = new List<TextMessage>();
+            theoryMessages = new List<PhotoMessage>();
 
             for (int i = 0; i < dataHandler.TheoryPagesCount; i++)
             {
-                var curMessage = new TextMessage(dataHandler.GetTheoryPage(i) ?? "Дальше теории нет");
+                var page = dataHandler.GetTheoryPage(i);
+
+                if (page == null)
+                    break;
+
+                var curMessage = new PhotoMessage(page.Text, File.OpenRead(page.PhotoFileName));
 
                 if (i == 0)
                     curMessage.AddKeyboardRow(new List<QueryKeyboardButton> { new QueryKeyboardButton("Следующая страница", "/theory?page=1") });
@@ -47,8 +52,6 @@ namespace MentalMathTelegramBot.Controllers
             var page = parameters["page"] != null ? int.Parse(parameters["page"]) : 0;
 
             var curMessage = theoryMessages[page];
-
-            curMessage.Text += $"\n {DateTime.Now.ToLocalTime()}";
 
             if (Context.RequestMessage.Text != curMessage.Text)
                 await EditMessageAsync(Context.RequestMessage, curMessage);

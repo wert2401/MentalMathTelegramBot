@@ -4,6 +4,7 @@ using MentalMathTelegramBot.Infrastructure.Attributes;
 using MentalMathTelegramBot.Infrastructure.Controllers;
 using MentalMathTelegramBot.Infrastructure.Messages;
 using MentalMathTelegramBot.Infrastructure.Messages.Queries;
+using MentalMathTelegramBot.Infrastructure.Updates;
 
 namespace MentalMathTelegramBot.Controllers.Controllers
 {
@@ -29,7 +30,12 @@ namespace MentalMathTelegramBot.Controllers.Controllers
 
             TextMessage msg;
 
-            if (Context.RequestMessage.Text == rightAnswer.Answer)
+            string userAnswer = Context.RequestMessage.Text ?? "";
+
+            if (Context is QueryContext queryContext)
+                userAnswer = queryContext.Query.Data ?? "";
+
+            if (userAnswer == rightAnswer.Answer)
             {
                 msg = new TextMessage("Правильно!");
             }
@@ -46,7 +52,15 @@ namespace MentalMathTelegramBot.Controllers.Controllers
                 case Tests.Test.AbacusNumber:
                     msg.AddKeyboardRow(new List<QueryKeyboardButton>() { new QueryKeyboardButton("Новый вопрос", "/testAbacusNumbers") });
                     break;
+                case Tests.Test.Theory:
+                    msg.AddKeyboardRow(new List<QueryKeyboardButton>() { new QueryKeyboardButton("Новый вопрос", "/testTheory") });
+                    break;
+                case Tests.Test.Facts:
+                    msg.AddKeyboardRow(new List<QueryKeyboardButton>() { new QueryKeyboardButton("Новый вопрос", "/testFacts") });
+                    break;
             }
+
+            msg.AddKeyboardRow(new List<QueryKeyboardButton>() { new QueryKeyboardButton("Окончить тестирование", "/start") });
 
             await SendMessageAsync(msg);
         }
