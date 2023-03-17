@@ -33,7 +33,7 @@ namespace MentalMathTelegramBot.Controllers.Controllers.Tests
         {
             var seq = GetSequence(3);
             int sum = seq.Sum();
-            var msg = await SendMessageAsync(new TextMessage($"Элемент 0: {seq[0]}"));
+            var msg = await SendMessageAsync(new TextMessage($"Слагаемое 1: {seq[0]}"));
             
             await Task.Delay(700);
 
@@ -41,7 +41,7 @@ namespace MentalMathTelegramBot.Controllers.Controllers.Tests
 
             for (int i = 0; i < seq.Count; i++)
             {
-                await EditMessageAsync(msg, new TextMessage($"Элемент {i+1}: {seq[i]}"));
+                await EditMessageAsync(msg, new TextMessage($"Слагаемое {i+2}: {seq[i]}"));
                 await Task.Delay(500);
             }
 

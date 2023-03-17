@@ -12,22 +12,31 @@ namespace MentalMathTelegramBot
     {
         static void Main(string[] args)
         {
-            var config = new ConfigurationBuilder()
+            try
+            {
+                var config = new ConfigurationBuilder()
+                # if DEBUG
                 .AddUserSecrets<Program>()
+                #endif
                 .AddJsonFile("appsettings.json")
                 .Build();
 
-            BotBuilder botBuilder = new BotBuilder();
+                BotBuilder botBuilder = new BotBuilder();
 
-            botBuilder.Services.AddLogging(logging => logging.AddConsole());
-            botBuilder.Services.RegisterControllers();
-            botBuilder.Services.AddDbContext<BotDbContext>();
-            botBuilder.Services.AddSingleton<MessagesDataHandler>();
-            botBuilder.Services.AddSingleton<UnitOfWork>();
+                botBuilder.Services.AddLogging(logging => logging.AddConsole());
+                botBuilder.Services.RegisterControllers();
+                botBuilder.Services.AddDbContext<BotDbContext>();
+                botBuilder.Services.AddSingleton<MessagesDataHandler>();
+                botBuilder.Services.AddSingleton<UnitOfWork>();
 
-            Bot bot = botBuilder.Build(config);
+                Bot bot = botBuilder.Build(config);
 
-            bot.Start();
+                bot.Start();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
 
             Console.ReadLine();
         }

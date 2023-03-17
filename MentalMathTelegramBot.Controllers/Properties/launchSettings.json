@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "MentalMathTelegramBot.Controllers": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
